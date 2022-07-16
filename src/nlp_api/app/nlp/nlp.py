@@ -8,7 +8,12 @@ class NounsVerbs(Resource):
     nlp = spacy.load("en_core_web_sm")
 
     def post(self):
-        doc = self.nlp(request.form['data'])
+        parser = reqparse.RequestParser()
+        parser.add_argument('body')
+        args = parser.parse_args()
+
+        doc = self.nlp(args['body'])
+        
         return jsonify({"Noun phrases": [chunk.text for chunk in doc.noun_chunks],
                         "Verbs": [token.lemma_ for token in doc if token.pos_ == "VERB"]})
 
